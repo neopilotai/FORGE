@@ -1,0 +1,140 @@
+{
+    "name": "forge-ci",
+    "displayName": "Forge CI: AI DevOps Copilot",
+    "description": "Analyze GitHub Actions failures and fix them automatically with AI.",
+    "version": "0.1.0",
+    "publisher": "khulnasoft",
+    "engines": {
+        "vscode": "^1.85.0"
+    },
+    "categories": [
+        "Other",
+        "Machine Learning",
+        "Azure"
+    ],
+    "activationEvents": [
+        "onView:forgeCI.prExplorer"
+    ],
+    "main": "./out/extension.js",
+    "contributes": {
+        "commands": [
+            {
+                "command": "forgeCI.analyzeFailed",
+                "title": "Forge: Analyze Failed Action",
+                "icon": "$(wand)"
+            },
+            {
+                "command": "forgeCI.refresh",
+                "title": "Forge: Refresh PRs",
+                "icon": "$(refresh)"
+            },
+            {
+                "command": "forgeCI.reviewPR",
+                "title": "Forge: Review Pull Request",
+                "icon": "$(eye)"
+            },
+            {
+                "command": "forgeCI.setApiKey",
+                "title": "Forge: Set OpenAI API Key"
+            }
+        ],
+        "viewsContainers": {
+            "activitybar": [
+                {
+                    "id": "forge-ci",
+                    "title": "Forge CI",
+                    "icon": "resources/forge-icon.svg"
+                }
+            ]
+        },
+        "views": {
+            "forge-ci": [
+                {
+                    "id": "forgeCI.prExplorer",
+                    "name": "Pull Requests"
+                }
+            ]
+        },
+        "configuration": {
+            "title": "Forge CI",
+            "properties": {
+                "forgeCI.aiProvider": {
+                    "type": "string",
+                    "enum": [
+                        "OpenAI",
+                        "Ollama",
+                        "Mock"
+                    ],
+                    "default": "OpenAI",
+                    "description": "Which AI provider to use for analysis."
+                },
+                "forgeCI.openaiApiKey": {
+                    "type": "string",
+                    "default": "",
+                    "description": "OpenAI API Key"
+                },
+                "forgeCI.ollamaUrl": {
+                    "type": "string",
+                    "default": "http://localhost:11434",
+                    "description": "URL for the local Ollama instance."
+                },
+                "forgeCI.ollamaModel": {
+                    "type": "string",
+                    "default": "llama3",
+                    "description": "The local model to use (e.g., llama3, deepseek-coder, mistral)."
+                }
+            }
+        },
+        "menus": {
+            "view/item/context": [
+                {
+                    "command": "forgeCI.analyzeFailed",
+                    "when": "view == forgeCI.prExplorer && viewItem == job",
+                    "group": "inline"
+                },
+                {
+                    "command": "forgeCI.reviewPR",
+                    "when": "view == forgeCI.prExplorer && viewItem == pr",
+                    "group": "inline"
+                }
+            ]
+        }
+    },
+    "scripts": {
+        "vscode:prepublish": "npm run compile",
+        "compile": "tsc -p ./",
+        "watch": "tsc -watch -p ./",
+        "pretest": "npm run compile",
+        "test": "node ./out/test/runTest.js",
+        "lint": "eslint src --ext ts"
+    },
+    "devDependencies": {
+        "@types/mocha": "^10.0.6",
+        "@types/node": "^20.0.0",
+        "@types/vscode": "^1.85.0",
+        "@typescript-eslint/eslint-plugin": "^6.0.0",
+        "@typescript-eslint/parser": "^6.0.0",
+        "eslint": "^8.0.0",
+        "typescript": "^5.3.0"
+    },
+    "dependencies": {
+        "@octokit/rest": "^20.0.2",
+        "dotenv": "^16.4.1",
+        "openai": "^4.28.0",
+        "anthropic": "^0.20.0"
+    },
+    "keywords": [
+        "github",
+        "actions",
+        "ci",
+        "ai",
+        "devops",
+        "copilot"
+    ],
+    "author": "KhulnaSoft",
+    "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/khulnasoft/forge-ci"
+    }
+}

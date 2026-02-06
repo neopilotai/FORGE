@@ -1,0 +1,352 @@
+{
+  "runSettings": {
+    "temperature": 1.0,
+    "model": "models/gemini-3-pro-preview",
+    "topP": 0.95,
+    "topK": 64,
+    "maxOutputTokens": 65536,
+    "safetySettings": [{
+      "category": "HARM_CATEGORY_HARASSMENT",
+      "threshold": "OFF"
+    }, {
+      "category": "HARM_CATEGORY_HATE_SPEECH",
+      "threshold": "OFF"
+    }, {
+      "category": "HARM_CATEGORY_SEXUALLY_EXPLICIT",
+      "threshold": "OFF"
+    }, {
+      "category": "HARM_CATEGORY_DANGEROUS_CONTENT",
+      "threshold": "OFF"
+    }],
+    "enableCodeExecution": true,
+    "enableSearchAsATool": true,
+    "enableBrowseAsATool": false,
+    "enableAutoFunctionResponse": false,
+    "thinkingBudget": -1,
+    "googleSearch": {
+    },
+    "mediaResolution": "MEDIA_RESOLUTION_MEDIUM",
+    "outputResolution": "1K",
+    "thinkingLevel": "THINKING_HIGH"
+  },
+  "systemInstruction": {
+  },
+  "chunkedPrompt": {
+    "chunks": [{
+      "text": "Refination Nice problem to tackle 😄 — and that screenshot helps a lot. What you’re describing is **not just a VS Code extension**, it’s an **AI DevOps copilot** that understands **PRs + GitHub Actions logs + codebase state** and can **suggest + fix** issues.\n\nI’ll break this into **practical, buildable layers**, not hand-wavy AI talk.\n\n---\n\n## 🎯 What You’re Building (Clear Scope)\n\nA VS Code extension that can:\n\n1. **Analyze PRs**\n\n   * Diffs\n   * Failing checks\n   * GitHub Actions logs (like your deploy/publish failures)\n\n2. **Explain failures**\n\n   * Why `deploy #4` failed but `stats #4` passed\n   * Root cause from logs, not just surface errors\n\n3. **Suggest fixes**\n\n   * YAML workflow fixes\n   * Code changes\n   * Dependency/version fixes\n\n4. **Optionally auto-fix**\n\n   * Generate patches\n   * Open PR comments or apply changes locally\n\nThis is basically **GitHub Copilot + Sentry + CI Doctor**, but open and programmable.\n\n---\n\n## 🧱 High-Level Architecture\n\n```\nVS Code Extension (UI)\n        |\n        v\nLocal Agent (Node/Python)\n        |\n        v\nAI Reasoning Engine\n        |\n        +--\u003e GitHub API (PRs, Actions, Logs)\n        +--\u003e Repo Workspace (code, diffs)\n        +--\u003e CI Knowledge Base\n```\n\n---\n\n## 1️⃣ VS Code Extension (Frontend)\n\n### Responsibilities\n\n* UI only (don’t do heavy AI here)\n* Collect context\n* Display results\n* Apply patches\n\n### Core Features\n\n* **PR Sidebar**\n* **Failed Action Analyzer**\n* **“Fix This” button**\n\n### Tech\n\n* `TypeScript`\n* VS Code Extension API\n* Webview (React/Svelte optional)\n\n### Key APIs you’ll use\n\n```ts\nvscode.window.createWebviewPanel()\nvscode.workspace.applyEdit()\nvscode.commands.registerCommand()\n```\n\n---\n\n## 2️⃣ GitHub Context Ingestor (Critical)\n\nThis is the **brain feeder**.\n\n### Pull Request Data\n\n* Files changed\n* Diffs\n* Comments\n* Check runs\n\n### Actions Log Fetching\n\n```text\nGET /repos/{owner}/{repo}/actions/runs/{run_id}/logs\n```\n\nYou MUST:\n\n* Parse logs\n* Chunk intelligently (logs are huge)\n* Classify failures:\n\n  * build\n  * deploy\n  * permission\n  * missing secrets\n  * version mismatch\n\n👉 This is where most AI tools fail. You can win here.\n\n---\n\n## 3️⃣ CI Log → Structured Events\n\nConvert raw logs into **events**:\n\n```json\n{\n  \"job\": \"deploy\",\n  \"step\": \"Upload artifact\",\n  \"error_type\": \"permission_denied\",\n  \"signal\": \"403\",\n  \"context\": {\n    \"env\": \"GITHUB_TOKEN\",\n    \"scope\": \"packages:write\"\n  }\n}\n```\n\nThis makes AI **10× smarter**.\n\n---\n\n## 4️⃣ AI Reasoning Layer (Core Intelligence)\n\n### Model Role Separation (IMPORTANT)\n\n| Role            | What it does            |\n| --------------- | ----------------------- |\n| Log Analyst     | Understands CI failures |\n| Code Reviewer   | Reviews PR diff         |\n| Fix Generator   | Produces patches        |\n| Workflow Expert | Fixes YAML              |\n\nUse **multi-agent prompting**, not one big prompt.\n\nExample:\n\n```yaml\nagents:\n  - ci_log_analyst\n  - workflow_fixer\n  - code_reviewer\n```\n\n---\n\n## 5️⃣ Fix Generation Strategy (Safe by Default)\n\n### Levels of Action\n\n1. **Explain only**\n2. **Suggest diff**\n3. **Apply patch**\n4. **Open PR / Comment**\n\nDefault to **#2**.\n\nPatch format:\n\n```diff\ndiff --git a/.github/workflows/deploy.yml b/.github/workflows/deploy.yml\n```\n\n---\n\n## 6️⃣ VS Code UX (Minimal but Powerful)\n\n### Panels\n\n* 🔴 **Failures**\n* 🧠 **Root Cause**\n* 🛠 **Suggested Fix**\n\n### Commands\n\n```\nAI: Analyze Current PR\nAI: Explain Failed Action\nAI: Generate Fix Patch\nAI: Apply Fix\n```\n\n---\n\n## 7️⃣ Security \u0026 Trust (Very Important)\n\nYou MUST:\n\n* Show **exact prompt**\n* Show **exact diff**\n* Never auto-push\n* Never auto-run code\n\nThis matters for adoption.\n\n---\n\n## 8️⃣ Example: Your Screenshot Case\n\nFrom your image:\n\n* `stats` ✅ passes\n* `deploy` ❌ fails\n* `publish` ❌ fails\n\nAI should infer:\n\n* Build is fine\n* Failure is **post-build**\n* Likely causes:\n\n  * Missing `GITHUB_TOKEN` permissions\n  * Package registry auth\n  * Environment mismatch\n\nSuggested fix example:\n\n```yaml\npermissions:\n  contents: read\n  packages: write\n```\n\n---\n\n## 9️⃣ Suggested Repo Structure\n\n```\nai-vscode-reviewer/\n├─ extension/        # VS Code UI\n├─ agent/\n│  ├─ github.ts\n│  ├─ logs.ts\n│  ├─ diff.ts\n│  ├─ analyzer/\n│  ├─ fixers/\n│  └─ prompts/\n├─ models/\n├─ schemas/\n└─ README.md\n```\n\n---\n\n## 10️⃣ Naming Ideas (Strong \u0026 Memorable)\n\nSince you like Warp / Vertex vibes:\n\n* **PRISM** – sees through failures\n* **FORGE** – fixes \u0026 builds\n* **PATCHAI**\n* **CI-SHIELD**\n* **NEO-REVIEW**\n* **RUNBOOK**\n\nMy top pick for you: **FORGE** 🔥\n\n",
+      "role": "user",
+      "tokenCount": 1332
+    }, {
+      "text": "**Refining Initial Idea**\n\nI\u0027m currently analyzing the user\u0027s refinement of the VS Code extension plan. The user provided a structured plan for the VS Code extension, so I\u0027m focusing on the plan for its creation.\n\n\n**Analyzing the Plan\u0027s Design**\n\nI\u0027ve moved on to deconstructing the user\u0027s VS Code extension plan. I\u0027m noting its strengths, such as the clear scope and logical separation of concerns. The focus on log parsing before AI analysis is particularly astute. The multi-agent approach seems promising, offering specialized roles that can improve its design.\n\n\n\n**Addressing Implementation Hurdles**\n\nI\u0027m now grappling with the plan\u0027s feasibility. The main concerns include log parsing complexity, context window limitations, secure OAuth handling, and potential latency issues. Additionally, I\u0027m reconsidering the architecture\u0027s \"Local Agent\" in the context of a VS Code extension, thinking that it might be an unneeded complication. I\u0027m focusing on making the plan shippable and moving towards an implementation strategy, so I want to address these gaps.\n\n\n**Simplifying Core Concepts**\n\nI\u0027m now prioritizing simplification. I\u0027ve eliminated the Python agent, opting for TypeScript/WASM for easier distribution. Also, I\u0027m focusing on heuristic log parsing, scanning for common error indicators. I\u0027m focusing on defining prompt formatting, and will outline an MVP roadmap next. Finally, I\u0027ve drafted section content, acknowledging CI debugging as the main problem. The \"Agent\" will be addressed directly in LangChain.js. The current focus is on simpler design.\n\n\n**Defining Error Analysis Strategy**\n\nI\u0027m now implementing \"smart filtering\" to address log size constraints, focusing on critical error indicators like \"Error\" or exit codes, and then pulling surrounding context. I\u0027m also drafting a prompt template, now with role, context, file context, and constraints. I\u0027ve decided to leverage VS Code\u0027s authentication for secure repository access. I\u0027m focusing on \"explain the failure\" as an MVP.\n\n\n",
+      "role": "model",
+      "tokenCount": 1279,
+      "isThought": true,
+      "parts": [{
+        "text": "**Refining Initial Idea**\n\nI\u0027m currently analyzing the user\u0027s refinement of the VS Code extension plan. The user provided a structured plan for the VS Code extension, so I\u0027m focusing on the plan for its creation.\n\n\n",
+        "thought": true
+      }, {
+        "text": "**Analyzing the Plan\u0027s Design**\n\nI\u0027ve moved on to deconstructing the user\u0027s VS Code extension plan. I\u0027m noting its strengths, such as the clear scope and logical separation of concerns. The focus on log parsing before AI analysis is particularly astute. The multi-agent approach seems promising, offering specialized roles that can improve its design.\n\n\n\n",
+        "thought": true
+      }, {
+        "text": "**Addressing Implementation Hurdles**\n\nI\u0027m now grappling with the plan\u0027s feasibility. The main concerns include log parsing complexity, context window limitations, secure OAuth handling, and potential latency issues. Additionally, I\u0027m reconsidering the architecture\u0027s \"Local Agent\" in the context of a VS Code extension, thinking that it might be an unneeded complication. I\u0027m focusing on making the plan shippable and moving towards an implementation strategy, so I want to address these gaps.\n\n\n",
+        "thought": true
+      }, {
+        "text": "**Simplifying Core Concepts**\n\nI\u0027m now prioritizing simplification. I\u0027ve eliminated the Python agent, opting for TypeScript/WASM for easier distribution. Also, I\u0027m focusing on heuristic log parsing, scanning for common error indicators. I\u0027m focusing on defining prompt formatting, and will outline an MVP roadmap next. Finally, I\u0027ve drafted section content, acknowledging CI debugging as the main problem. The \"Agent\" will be addressed directly in LangChain.js. The current focus is on simpler design.\n\n\n",
+        "thought": true
+      }, {
+        "text": "**Defining Error Analysis Strategy**\n\nI\u0027m now implementing \"smart filtering\" to address log size constraints, focusing on critical error indicators like \"Error\" or exit codes, and then pulling surrounding context. I\u0027m also drafting a prompt template, now with role, context, file context, and constraints. I\u0027ve decided to leverage VS Code\u0027s authentication for secure repository access. I\u0027m focusing on \"explain the failure\" as an MVP.\n\n\n",
+        "thought": true
+      }]
+    }, {
+      "text": "This is a **fantastic** foundation. You have moved past the \"idea phase\" into a concrete architectural blueprint. The scope is clear, the problem is painful (CI debugging is miserable), and the solution fits perfectly into the developer workflow.\n\nHere is the **Refinement** of your plan—moving from \"Architecture\" to **\"Implementation Strategy.\"** I will focus on the technical bottlenecks you will face and how to solve them so you can build the MVP.\n\n---\n\n### 🛠 Refinement 1: Architecture \u0026 Tech Stack (Simplify to Ship)\n\n**Critique:** You mentioned a \"Local Agent (Node/Python).\"\n**Advice:** **Drop Python.** Keep the entire stack **TypeScript**.\n\n*   **Why?** Bundling a Python runtime with a VS Code extension is a nightmare for distribution (user system paths, pip dependencies, OS compatibility).\n*   **Solution:** Use **LangChain.js** or the Vercel AI SDK directly within the VS Code Node.js process. It’s lightweight, native to VS Code, and can handle the \"Reasoning Engine\" perfectly.\n\n**Revised Stack:**\n1.  **UI:** React (via Webview) or just TreeViews (native VS Code UI is faster/cleaner).\n2.  **Logic:** TypeScript (Node.js environment).\n3.  **LLM:** calls to OpenAI/Anthropic/DeepSeek APIs.\n4.  **Git:** `isomorphic-git` or simple shell execution of `git` commands.\n\n---\n\n### 🔍 Refinement 2: The \"Log Ingestion\" Strategy (The Hardest Part)\n\n**The Problem:** CI logs can be 10MB+. You cannot feed 10MB into an LLM context window (it\u0027s slow and expensive).\n**The Fix:** You need a deterministic **Pre-processor** before the AI sees anything.\n\n**Algorithm for `LogParser.ts`:**\n1.  **Fetch Raw Log:** Get the `.txt` content of the failed step.\n2.  **Keyword Heuristics:** Scan lines for `Error:`, `Exception:`, `Fatal:`, or `Exit code 1`.\n3.  **Context Windowing:** Extract the **Error Line** + **50 lines before** + **10 lines after**.\n4.  **Sanitization:** Regex out sensitive data (API keys usually look like `sk-...` or long alphanumeric strings) *before* sending to the AI.\n\n**The Payload to AI:**\nInstead of the whole log, the AI receives:\n\u003e \"The Action \u0027Build\u0027 failed at step \u0027Run Tests\u0027. Here are the last 50 lines of the output. Focus on lines 45-50.\"\n\n---\n\n### 🧠 Refinement 3: The \"Reasoning\" Prompts\n\nYou mentioned \"Multi-agent.\" For an MVP, you can achieve this with **Chain-of-Thought (CoT)** prompting in a single strong model (like GPT-4o or Claude 3.5 Sonnet).\n\n**System Prompt Structure:**\n```markdown\nYou are FORGE, an expert DevOps engineer and CI/CD specialist.\nYour goal: Analyze a CI failure and provide a root cause and a fix.\n\nINPUT DATA:\n1. Workflow File: `.github/workflows/deploy.yml`\n2. Failure Snippet: (The 50 lines extracted)\n3. Diff: (Changes made in the PR)\n\nTASK:\n1. Identify the specific error (e.g., Syntax, Permission, Timeout, Logic).\n2. Correlate the error with the Diff (Did the user change the build script?).\n3. Suggest a concrete YAML or Code fix.\n\nOUTPUT FORMAT:\nReturn JSON with keys: { \"root_cause\": string, \"confidence\": number, \"fix_patch\": string }\n```\n\n---\n\n### 🔐 Refinement 4: Authentication (Don\u0027t Roll Your Own)\n\n**Critique:** You need access to private repos.\n**Advice:** Do **not** ask users to paste a Personal Access Token (PAT).\n\n**Solution:** Use VS Code\u0027s native Authentication Provider.\n```typescript\nimport * as vscode from \u0027vscode\u0027;\n\nasync function getGitHubToken() {\n    const session \u003d await vscode.authentication.getSession(\u0027github\u0027, [\u0027repo\u0027, \u0027workflow\u0027], { createIfNone: true });\n    return session.accessToken;\n}\n```\nThis gives you instant, secure access to the user\u0027s PRs and Actions without them managing keys.\n\n---\n\n### 🚀 Refinement 5: The \"MVP\" Roadmap (Week 1 Build)\n\nDon\u0027t build the \"Auto-fix\" or \"Patch application\" yet. Start with **Read-Only Intelligence**.\n\n**Step 1: The \"What Happened?\" Button**\n*   Add a TreeView in the sidebar listing active PRs.\n*   Click a PR -\u003e Expand to show Check Runs.\n*   Click a Failed Run (`deploy #4`) -\u003e Trigger `LogParser`.\n*   **Result:** A simple Markdown notification or sidebar panel saying:\n    \u003e \"Deploy failed because `npm publish` got a 403 Forbidden. It looks like your `GITHUB_TOKEN` is missing `packages: write` permissions in `deploy.yml`.\"\n\n**Step 2: The \"Show me the Fix\" Button**\n*   Once Step 1 works, ask the AI to generate the YAML fix.\n*   Display a diff view in a read-only editor tab.\n\n---\n\n### ⚡️ Specific Feedback on your \"Screenshot Case\"\n\nYour example: *Stats passes, Deploy fails.*\n\n**The heuristic logic your agent needs:**\n1.  **Dependency Check:** Does `deploy` depend on `stats`? (Check `needs: [stats]` in YAML).\n2.  **Environment Check:** Is `deploy` running on `ubuntu-latest` but `stats` on `windows`?\n3.  **Secret Check:** search the YAML for `secrets.GITHUB_TOKEN` or `NPM_TOKEN`. If the log says \"Unauthorized,\" and the YAML has the secret, the *secret value* is wrong or the *permissions scope* is wrong.\n\n---\n\n### 🏆 Naming Selection\n\n**FORGE** is excellent. It implies creation, strength, and fixing things with heat.\n\n*   **Extension Name:** Forge CI\n*   **Command:** `Forge: Analyze Build`\n*   **Icon:** A blacksmith\u0027s anvil or a glowing hammer hitting a gear.\n\n### Next Immediate Step\nCreate a blank VS Code extension (`yo code`), set up the GitHub Authentication provider, and try to just **console.log the raw text of a failed CI log** from one of your repos. Once you have that string in a variable, you have won 50% of the battle.",
+      "role": "model",
+      "finishReason": "STOP",
+      "tokenCount": 1459,
+      "parts": [{
+        "text": "This is a **fantastic** foundation. You have moved"
+      }, {
+        "text": " past the \"idea phase\" into a concrete architectural blueprint. The scope is clear, the problem is painful (CI debugging is"
+      }, {
+        "text": " miserable), and the solution fits perfectly into the developer workflow.\n\nHere is the **Refinement** of your plan—moving"
+      }, {
+        "text": " from \"Architecture\" to **\"Implementation Strategy.\"** I will focus on the technical bottlenecks you will face and how to"
+      }, {
+        "text": " solve them so you can build the MVP.\n\n---\n\n### 🛠 Refinement 1: Architecture \u0026 Tech Stack (Simplify"
+      }, {
+        "text": " to Ship)\n\n**Critique:** You mentioned a \"Local Agent (Node/Python).\"\n**Advice:** **Drop"
+      }, {
+        "text": " Python.** Keep the entire stack **TypeScript**.\n\n*   **Why?** Bundling a Python runtime with a VS Code extension"
+      }, {
+        "text": " is a nightmare for distribution (user system paths, pip dependencies, OS compatibility).\n*   **Solution:** Use **Lang"
+      }, {
+        "text": "Chain.js** or the Vercel AI SDK directly within the VS Code Node.js process. It’s lightweight, native"
+      }, {
+        "text": " to VS Code, and can handle the \"Reasoning Engine\" perfectly.\n\n**Revised Stack:**\n1.  **UI"
+      }, {
+        "text": ":** React (via Webview) or just TreeViews (native VS Code UI is faster/cleaner).\n2"
+      }, {
+        "text": ".  **Logic:** TypeScript (Node.js environment).\n3.  **LLM:** calls to OpenAI/"
+      }, {
+        "text": "Anthropic/DeepSeek APIs.\n4.  **Git:** `isomorphic-git` or simple shell execution"
+      }, {
+        "text": " of `git` commands.\n\n---\n\n### 🔍 Refinement 2: The \"Log Ingestion\" Strategy"
+      }, {
+        "text": " (The Hardest Part)\n\n**The Problem:** CI logs can be 10MB+. You cannot feed "
+      }, {
+        "text": "10MB into an LLM context window (it\u0027s slow and expensive).\n**The Fix:** You need a"
+      }, {
+        "text": " deterministic **Pre-processor** before the AI sees anything.\n\n**Algorithm for `LogParser.ts`:**\n1.  "
+      }, {
+        "text": "**Fetch Raw Log:** Get the `.txt` content of the failed step.\n2.  **Keyword Heur"
+      }, {
+        "text": "istics:** Scan lines for `Error:`, `Exception:`, `Fatal:`, or `Exit code 1`.\n3"
+      }, {
+        "text": ".  **Context Windowing:** Extract the **Error Line** + **50 lines before** + **10"
+      }, {
+        "text": " lines after**.\n4.  **Sanitization:** Regex out sensitive data (API keys usually look like `sk-..."
+      }, {
+        "text": "` or long alphanumeric strings) *before* sending to the AI.\n\n**The Payload to AI:**\nInstead of the"
+      }, {
+        "text": " whole log, the AI receives:\n\u003e \"The Action \u0027Build\u0027 failed at step \u0027Run Tests\u0027. Here are"
+      }, {
+        "text": " the last 50 lines of the output. Focus on lines 45-50.\"\n\n---\n\n### 🧠 Ref"
+      }, {
+        "text": "inement 3: The \"Reasoning\" Prompts\n\nYou mentioned \"Multi-agent.\" For an MVP, you"
+      }, {
+        "text": " can achieve this with **Chain-of-Thought (CoT)** prompting in a single strong model (like GPT-"
+      }, {
+        "text": "4o or Claude 3.5 Sonnet).\n\n**System Prompt Structure:**\n```markdown\nYou are FOR"
+      }, {
+        "text": "GE, an expert DevOps engineer and CI/CD specialist.\nYour goal: Analyze a CI failure and provide a root"
+      }, {
+        "text": " cause and a fix.\n\nINPUT DATA:\n1. Workflow File: `.github/workflows/deploy.yml"
+      }, {
+        "text": "`\n2. Failure Snippet: (The 50 lines extracted)\n3. Diff: (Changes made in the PR)"
+      }, {
+        "text": "\n\nTASK:\n1. Identify the specific error (e.g., Syntax, Permission, Timeout, Logic).\n"
+      }, {
+        "text": "2. Correlate the error with the Diff (Did the user change the build script?).\n3. Suggest a concrete"
+      }, {
+        "text": " YAML or Code fix.\n\nOUTPUT FORMAT:\nReturn JSON with keys: { \"root_cause\": string, \"confidence"
+      }, {
+        "text": "\": number, \"fix_patch\": string }\n```\n\n---\n\n### 🔐 Refinement 4: Authentication ("
+      }, {
+        "text": "Don\u0027t Roll Your Own)\n\n**Critique:** You need access to private repos.\n**Advice:** Do **not**"
+      }, {
+        "text": " ask users to paste a Personal Access Token (PAT).\n\n**Solution:** Use VS Code\u0027s native Authentication Provider.\n```typescript"
+      }, {
+        "text": "\nimport * as vscode from \u0027vscode\u0027;\n\nasync function getGitHubToken() {\n    const session \u003d await vscode.authentication."
+      }, {
+        "text": "getSession(\u0027github\u0027, [\u0027repo\u0027, \u0027workflow\u0027], { createIfNone: true });\n    return session.accessToken;\n}\n"
+      }, {
+        "text": "```\nThis gives you instant, secure access to the user\u0027s PRs and Actions without them managing keys.\n\n"
+      }, {
+        "text": "---\n\n### 🚀 Refinement 5: The \"MVP\" Roadmap (Week 1 Build)\n\nDon\u0027"
+      }, {
+        "text": "t build the \"Auto-fix\" or \"Patch application\" yet. Start with **Read-Only Intelligence**.\n\n**Step "
+      }, {
+        "text": "1: The \"What Happened?\" Button**\n*   Add a TreeView in the sidebar listing active PRs."
+      }, {
+        "text": "\n*   Click a PR -\u003e Expand to show Check Runs.\n*   Click a Failed Run (`deploy #4`) -\u003e Trigger"
+      }, {
+        "text": " `LogParser`.\n*   **Result:** A simple Markdown notification or sidebar panel saying:\n    \u003e \"Deploy"
+      }, {
+        "text": " failed because `npm publish` got a 403 Forbidden. It looks like your `GITHUB_TOKEN` is missing `packages"
+      }, {
+        "text": ": write` permissions in `deploy.yml`.\"\n\n**Step 2: The \"Show me the Fix\" Button"
+      }, {
+        "text": "**\n*   Once Step 1 works, ask the AI to generate the YAML fix.\n*   Display a diff view"
+      }, {
+        "text": " in a read-only editor tab.\n\n---\n\n### ⚡️ Specific Feedback on your \"Screenshot Case\"\n\nYour"
+      }, {
+        "text": " example: *Stats passes, Deploy fails.*\n\n**The heuristic logic your agent needs:**\n1.  **Dependency"
+      }, {
+        "text": " Check:** Does `deploy` depend on `stats`? (Check `needs: [stats]` in YAML).\n2."
+      }, {
+        "text": "  **Environment Check:** Is `deploy` running on `ubuntu-latest` but `stats` on `windows`?"
+      }, {
+        "text": "\n3.  **Secret Check:** search the YAML for `secrets.GITHUB_TOKEN` or `NPM_TOKEN`."
+      }, {
+        "text": " If the log says \"Unauthorized,\" and the YAML has the secret, the *secret value* is wrong or the *permissions scope"
+      }, {
+        "text": "* is wrong.\n\n---\n\n### 🏆 Naming Selection\n\n**FORGE** is excellent. It implies creation"
+      }, {
+        "text": ", strength, and fixing things with heat.\n\n*   **Extension Name:** Forge CI\n*   **Command:** `Forge"
+      }, {
+        "text": ": Analyze Build`\n*   **Icon:** A blacksmith\u0027s anvil or a glowing hammer hitting a gear.\n\n### Next"
+      }, {
+        "text": " Immediate Step\nCreate a blank VS Code extension (`yo code`), set up the GitHub Authentication provider, and try to just"
+      }, {
+        "text": " **console.log the raw text of a failed CI log** from one of your repos. Once you have that string"
+      }, {
+        "text": " in a variable, you have won 50% of the battle."
+      }, {
+        "text": "",
+        "thoughtSignature": "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"
+      }]
+    }, {
+      "text": "full development ROADMAP build",
+      "role": "user",
+      "tokenCount": 6
+    }, {
+      "text": "**Defining the Project Scope**\n\nI\u0027m now zeroing in on defining the precise scope for \"Forge CI.\" We need a clear, user-centric roadmap. My current focus is establishing clear milestones and deliverables for each stage, breaking it down into manageable, actionable steps. I\u0027m exploring the key features to prioritize based on user need and feasibility, ensuring we address core pain points first.\n\n\n**Crafting the Execution Strategy**\n\nI\u0027ve received valuable architectural advice; now, I\u0027m forming a concrete plan to move forward. My focus is now creating a step-by-step execution plan based on the feedback. The target audience seems to be solo developers or small teams using a TypeScript stack, VS Code API, and APIs for OpenAI/Anthropic and GitHub. I\u0027m dividing the project into phases: MVP, Beta, and V1. Phase 1 focuses on setting up the environment, including scaffolding using `yo code`, GitHub authentication and fetching PR data. The final goal of phase 1 is a sidebar listing PRs.\n\n\n**Developing Core Functionality**\n\nI\u0027m now implementing the \"Log Sanitizer\" and \"Chunker,\" focusing on regex heuristics to identify error lines. The immediate milestone is to have relevant error snippets printed to the debug console when a failed check is clicked. This is a critical building block for later LLM integration.\n\n\n**Planning the Launch Sequence**\n\nI\u0027m now deep in post-MVP planning, zeroing in on distribution via the Marketplace. Security is a priority, and I will be prioritizing a robust security audit. I\u0027m incorporating telemetry to track usage. The roadmap is now broken into phases and actionable tasks, and tech checkpoints. I\u0027m drafting content, reiterating Forge CI\u0027s purpose, with a clearer structure to guide users.\n\n\n",
+      "role": "model",
+      "tokenCount": 1001,
+      "isThought": true,
+      "parts": [{
+        "text": "**Defining the Project Scope**\n\nI\u0027m now zeroing in on defining the precise scope for \"Forge CI.\" We need a clear, user-centric roadmap. My current focus is establishing clear milestones and deliverables for each stage, breaking it down into manageable, actionable steps. I\u0027m exploring the key features to prioritize based on user need and feasibility, ensuring we address core pain points first.\n\n\n",
+        "thought": true
+      }, {
+        "text": "**Crafting the Execution Strategy**\n\nI\u0027ve received valuable architectural advice; now, I\u0027m forming a concrete plan to move forward. My focus is now creating a step-by-step execution plan based on the feedback. The target audience seems to be solo developers or small teams using a TypeScript stack, VS Code API, and APIs for OpenAI/Anthropic and GitHub. I\u0027m dividing the project into phases: MVP, Beta, and V1. Phase 1 focuses on setting up the environment, including scaffolding using `yo code`, GitHub authentication and fetching PR data. The final goal of phase 1 is a sidebar listing PRs.\n\n\n",
+        "thought": true
+      }, {
+        "text": "**Developing Core Functionality**\n\nI\u0027m now implementing the \"Log Sanitizer\" and \"Chunker,\" focusing on regex heuristics to identify error lines. The immediate milestone is to have relevant error snippets printed to the debug console when a failed check is clicked. This is a critical building block for later LLM integration.\n\n\n",
+        "thought": true
+      }, {
+        "text": "**Planning the Launch Sequence**\n\nI\u0027m now deep in post-MVP planning, zeroing in on distribution via the Marketplace. Security is a priority, and I will be prioritizing a robust security audit. I\u0027m incorporating telemetry to track usage. The roadmap is now broken into phases and actionable tasks, and tech checkpoints. I\u0027m drafting content, reiterating Forge CI\u0027s purpose, with a clearer structure to guide users.\n\n\n",
+        "thought": true
+      }]
+    }, {
+      "text": "This is the **Full Development Roadmap** for **Forge CI**.\n\nIt is broken down into **5 Phases**, designed to get you from \"Empty Folder\" to \"Marketplace Release\" efficiently. We are prioritizing **technical risk first** (getting the data) and **UI second**.\n\n---\n\n### 📂 Project Setup \u0026 Structure\n\nBefore Phase 1, organize your workspace.\n\n```text\nforge-ci/\n├── src/\n│   ├── sidebar/             # The PR List UI\n│   ├── webview/             # The \"Chat/Fix\" Panel (React)\n│   ├── services/\n│   │   ├── github.ts        # Octokit \u0026 Auth\n│   │   ├── logParser.ts     # The Log Chunking Logic\n│   │   ├── ai.ts            # LLM Client (OpenAI/Anthropic)\n│   │   └── fileSystem.ts    # VS Code Workspace Edits\n│   └── extension.ts         # Entry Point\n├── package.json\n└── tsconfig.json\n```\n\n---\n\n### 🗓 Phase 1: The \"Connected\" Skeleton (Days 1-2)\n**Goal:** Authenticate with GitHub and display a list of active PRs in the VS Code Sidebar.\n\n*   [ ] **Scaffold Extension:** Run `yo code` (choose TypeScript).\n*   [ ] **Implement Auth:** Use `vscode.authentication.getSession(\u0027github\u0027, ...)` to get a token with `repo` and `workflow` scopes.\n*   [ ] **Setup Octokit:** Initialize `@octokit/rest` with that token.\n*   [ ] **Fetch PRs:** Create a TreeDataProvider that fetches open PRs for the current repository.\n*   [ ] **Fetch Status:** For each PR, fetch the `check_runs` status (Success, Failure, In_Progress).\n*   [ ] **UI:** Render a TreeView showing PRs -\u003e Workflows -\u003e Jobs.\n\n\u003e **✅ Checkpoint:** You can open VS Code, click the \"Forge\" icon, and see your current PRs with a red \"X\" next to failed jobs.\n\n---\n\n### 🗓 Phase 2: The Data Pipeline (Days 3-5)\n**Goal:** Retrieve the *specific* failure log and sanitize it. This is the technical bottleneck.\n\n*   [ ] **Download Logs:** Implement `octokit.actions.downloadJobLogsForWorkflowRun`.\n*   [ ] **Stream/Buffer:** **Do not** load the whole string into memory if possible. Handle the stream.\n*   [ ] **Heuristic Parsing (The \"Sieve\"):**\n    *   Scan for lines starting with `Error:`, `Fatal:`, `FAIL`.\n    *   Scan for exit codes (e.g., `Process completed with exit code 1`).\n*   [ ] **Context Extraction:** When an error line is found, grab 50 lines *before* and 10 lines *after*.\n*   [ ] **Sanitization:** Regex replace sensitive patterns (`sk-proj-...`, `ghp_...`).\n\n\u003e **✅ Checkpoint:** When you click a failed job in the Sidebar, a clean, short ( \u003c100 lines) error snippet prints to the VS Code \"Output\" panel.\n\n---\n\n### 🗓 Phase 3: The Intelligence Layer (Days 6-8)\n**Goal:** Feed the sanitized data to the AI and get a structured diagnosis.\n\n*   [ ] **Context Gathering:** Write a function to fetch the relevant local file.\n    *   *Example:* If `deploy.yml` failed, read `deploy.yml` from the workspace.\n*   [ ] **System Prompting:** Create the prompt in `src/services/ai.ts`.\n    *   *Role:* \"You are a CI Expert...\"\n    *   *Task:* \"Analyze this log snippet + this YAML file.\"\n*   [ ] **LLM Integration:** Connect to OpenAI (GPT-4o) or Anthropic (Claude 3.5 Sonnet).\n    *   *Tip:* Use `GPT-4o-mini` for dev/testing (cheaper/faster).\n*   [ ] **Structured Output:** Force the AI to return JSON:\n    ```json\n    {\n      \"summary\": \"NPM token missing\",\n      \"explanation\": \"The build failed because...\",\n      \"fix_file\": \".github/workflows/deploy.yml\",\n      \"fix_content\": \"...\"\n    }\n    ```\n\n\u003e **✅ Checkpoint:** You run the command, and the AI returns a JSON object accurately explaining *why* the build failed.\n\n---\n\n### 🗓 Phase 4: The Interactive UI (Days 9-12)\n**Goal:** Move from \"Output Panel\" to a rich Webview where users can accept fixes.\n\n*   [ ] **Webview Panel:** Create a React-based Webview.\n    *   Left side: Chat/Explanation.\n    *   Right side: Code preview.\n*   [ ] **Display Diagnosis:** Render the \"Summary\" and \"Explanation\" beautifully (Markdown support).\n*   [ ] **Diff View:** Use `vscode.commands.executeCommand(\u0027vscode.diff\u0027, ...)` to show the user the proposed change vs. current file.\n*   [ ] **Apply Fix:** Implement the \"Fix This\" button using `vscode.WorkspaceEdit`.\n    *   *Crucial:* Do not auto-save. Apply the edit to the open editor so the user must press Ctrl+S.\n\n\u003e **✅ Checkpoint:** You click a failure -\u003e A panel opens explaining the error -\u003e You click \"Show Fix\" -\u003e A Diff opens -\u003e You click \"Apply\" -\u003e The text changes in your editor.\n\n---\n\n### 🗓 Phase 5: Polish \u0026 Ship (Days 13-14)\n**Goal:** Security, performance, and publishing.\n\n*   [ ] **Telemetry:** Add rudimentary logging (no code, just usage stats) to know if people are using it.\n*   [ ] **Rate Limiting:** Ensure you don\u0027t spam the GitHub API or the OpenAI API.\n*   [ ] **Prompt Refinement:** Test against 5 different types of failures (Syntax error, Auth error, Test failure, Timeout, Deprecated Node version).\n*   [ ] **Packaging:** Run `vsce package`.\n*   [ ] **Publish:** Upload to VS Code Marketplace.\n\n---\n\n### 🚀 Technical \"Gotchas\" to Watch Out For\n\n1.  **The \"Missing Log\" Issue:** sometimes GitHub takes 10-20 seconds to make logs available via API after a run finishes. You need a retry mechanism.\n2.  **Token Limits:** If a user has a 5,000 line YAML file (monorepo), you might blow the context window. Truncate files if they exceed a certain size.\n3.  **Secrets:** Even with sanitization, be paranoid. Add a disclaimer in the UI: *\"Logs are sent to OpenAI for analysis. Ensure no hardcoded secrets are in your logs.\"*\n\n### 🏁 Start Here (Day 1 Command)\n\n```bash\n# Install the generator\nnpm install -g yo generator-code\n\n# Create the project\nyo code\n# ? What type of extension? New Extension (TypeScript)\n# ? What\u0027s the name of your extension? Forge CI\n```\n\nGo! 🔥",
+      "role": "model",
+      "finishReason": "STOP",
+      "tokenCount": 1588,
+      "parts": [{
+        "text": "This is the **Full Development Roadmap** for **Forge CI**.\n\nIt is broken down into"
+      }, {
+        "text": " **5 Phases**, designed to get you from \"Empty Folder\" to \"Marketplace Release\" efficiently. We are prioritizing"
+      }, {
+        "text": " **technical risk first** (getting the data) and **UI second**.\n\n---\n\n### 📂 Project Setup \u0026"
+      }, {
+        "text": " Structure\n\nBefore Phase 1, organize your workspace.\n\n```text\nforge-ci/\n├── src/\n│   ├──"
+      }, {
+        "text": " sidebar/             # The PR List UI\n│   ├── webview/             # The \"Chat/Fix\" Panel"
+      }, {
+        "text": " (React)\n│   ├── services/\n│   │   ├── github.ts        # Octokit \u0026 Auth\n"
+      }, {
+        "text": "│   │   ├── logParser.ts     # The Log Chunking Logic\n│   │   ├── ai.ts            "
+      }, {
+        "text": "# LLM Client (OpenAI/Anthropic)\n│   │   └── fileSystem.ts    # VS"
+      }, {
+        "text": " Code Workspace Edits\n│   └── extension.ts         # Entry Point\n├── package.json\n└── tsconfig.json\n"
+      }, {
+        "text": "```\n\n---\n\n### 🗓 Phase 1: The \"Connected\" Skeleton (Days 1-2)\n**Goal"
+      }, {
+        "text": ":** Authenticate with GitHub and display a list of active PRs in the VS Code Sidebar.\n\n*   [ ] **"
+      }, {
+        "text": "Scaffold Extension:** Run `yo code` (choose TypeScript).\n*   [ ] **Implement Auth:** Use "
+      }, {
+        "text": "`vscode.authentication.getSession(\u0027github\u0027, ...)` to get a token with `repo` and `workflow` scopes.\n*   "
+      }, {
+        "text": "[ ] **Setup Octokit:** Initialize `@octokit/rest` with that token.\n*   [ ] **"
+      }, {
+        "text": "Fetch PRs:** Create a TreeDataProvider that fetches open PRs for the current repository.\n*   [ ] **"
+      }, {
+        "text": "Fetch Status:** For each PR, fetch the `check_runs` status (Success, Failure, In_Progress).\n"
+      }, {
+        "text": "*   [ ] **UI:** Render a TreeView showing PRs -\u003e Workflows -\u003e Jobs.\n\n\u003e **✅ Check"
+      }, {
+        "text": "point:** You can open VS Code, click the \"Forge\" icon, and see your current PRs with a red \"X"
+      }, {
+        "text": "\" next to failed jobs.\n\n---\n\n### 🗓 Phase 2: The Data Pipeline (Days 3-5"
+      }, {
+        "text": ")\n**Goal:** Retrieve the *specific* failure log and sanitize it. This is the technical bottleneck.\n\n*"
+      }, {
+        "text": "   [ ] **Download Logs:** Implement `octokit.actions.downloadJobLogsForWorkflowRun`.\n*   [ ] **"
+      }, {
+        "text": "Stream/Buffer:** **Do not** load the whole string into memory if possible. Handle the stream.\n*   "
+      }, {
+        "text": "[ ] **Heuristic Parsing (The \"Sieve\"):**\n    *   Scan for lines starting with `Error:"
+      }, {
+        "text": "`, `Fatal:`, `FAIL`.\n    *   Scan for exit codes (e.g., `Process completed"
+      }, {
+        "text": " with exit code 1`).\n*   [ ] **Context Extraction:** When an error line is found, grab 50 lines"
+      }, {
+        "text": " *before* and 10 lines *after*.\n*   [ ] **Sanitization:** Regex replace sensitive patterns"
+      }, {
+        "text": " (`sk-proj-...`, `ghp_...`).\n\n\u003e **✅ Checkpoint:** When you click a failed"
+      }, {
+        "text": " job in the Sidebar, a clean, short ( \u003c100 lines) error snippet prints to the VS Code \""
+      }, {
+        "text": "Output\" panel.\n\n---\n\n### 🗓 Phase 3: The Intelligence Layer (Days 6-8)\n"
+      }, {
+        "text": "**Goal:** Feed the sanitized data to the AI and get a structured diagnosis.\n\n*   [ ] **Context Gathering"
+      }, {
+        "text": ":** Write a function to fetch the relevant local file.\n    *   *Example:* If `deploy.yml"
+      }, {
+        "text": "` failed, read `deploy.yml` from the workspace.\n*   [ ] **System Prompting:** Create the prompt in "
+      }, {
+        "text": "`src/services/ai.ts`.\n    *   *Role:* \"You are a CI Expert...\"\n    *   "
+      }, {
+        "text": "*Task:* \"Analyze this log snippet + this YAML file.\"\n*   [ ] **LLM Integration:** Connect"
+      }, {
+        "text": " to OpenAI (GPT-4o) or Anthropic (Claude 3.5 Sonnet).\n    *   "
+      }, {
+        "text": "*Tip:* Use `GPT-4o-mini` for dev/testing (cheaper/faster).\n*   ["
+      }, {
+        "text": " ] **Structured Output:** Force the AI to return JSON:\n    ```json\n    {\n      \"summary\":"
+      }, {
+        "text": " \"NPM token missing\",\n      \"explanation\": \"The build failed because...\",\n      \"fix_file\": \"."
+      }, {
+        "text": "github/workflows/deploy.yml\",\n      \"fix_content\": \"...\"\n    }\n    ```\n\n\u003e **"
+      }, {
+        "text": "✅ Checkpoint:** You run the command, and the AI returns a JSON object accurately explaining *why* the build failed."
+      }, {
+        "text": "\n\n---\n\n### 🗓 Phase 4: The Interactive UI (Days 9-12)\n**Goal"
+      }, {
+        "text": ":** Move from \"Output Panel\" to a rich Webview where users can accept fixes.\n\n*   [ ] **Web"
+      }, {
+        "text": "view Panel:** Create a React-based Webview.\n    *   Left side: Chat/Explanation.\n    *   Right"
+      }, {
+        "text": " side: Code preview.\n*   [ ] **Display Diagnosis:** Render the \"Summary\" and \"Explanation\" beautifully"
+      }, {
+        "text": " (Markdown support).\n*   [ ] **Diff View:** Use `vscode.commands.executeCommand(\u0027vscode.diff\u0027,"
+      }, {
+        "text": " ...)` to show the user the proposed change vs. current file.\n*   [ ] **Apply Fix:** Implement the"
+      }, {
+        "text": " \"Fix This\" button using `vscode.WorkspaceEdit`.\n    *   *Crucial:* Do not auto-save. Apply"
+      }, {
+        "text": " the edit to the open editor so the user must press Ctrl+S.\n\n\u003e **✅ Checkpoint:** You click"
+      }, {
+        "text": " a failure -\u003e A panel opens explaining the error -\u003e You click \"Show Fix\" -\u003e A Diff opens -\u003e You click \"Apply\""
+      }, {
+        "text": " -\u003e The text changes in your editor.\n\n---\n\n### 🗓 Phase 5: Polish \u0026 Ship (Days 1"
+      }, {
+        "text": "3-14)\n**Goal:** Security, performance, and publishing.\n\n*   [ ] **Telemetry:** Add"
+      }, {
+        "text": " rudimentary logging (no code, just usage stats) to know if people are using it.\n*   [ ] **Rate Limiting"
+      }, {
+        "text": ":** Ensure you don\u0027t spam the GitHub API or the OpenAI API.\n*   [ ] **Prompt Refinement:** Test"
+      }, {
+        "text": " against 5 different types of failures (Syntax error, Auth error, Test failure, Timeout, Deprecated Node version).\n*   "
+      }, {
+        "text": "[ ] **Packaging:** Run `vsce package`.\n*   [ ] **Publish:** Upload to VS Code Marketplace.\n\n"
+      }, {
+        "text": "---\n\n### 🚀 Technical \"Gotchas\" to Watch Out For\n\n1.  **The \"Missing Log\" Issue:** sometimes"
+      }, {
+        "text": " GitHub takes 10-20 seconds to make logs available via API after a run finishes. You need a retry mechanism"
+      }, {
+        "text": ".\n2.  **Token Limits:** If a user has a 5,000 line YAML file ("
+      }, {
+        "text": "monorepo), you might blow the context window. Truncate files if they exceed a certain size.\n3.  **"
+      }, {
+        "text": "Secrets:** Even with sanitization, be paranoid. Add a disclaimer in the UI: *\"Logs are sent to OpenAI for analysis."
+      }, {
+        "text": " Ensure no hardcoded secrets are in your logs.\"*\n\n### 🏁 Start Here (Day 1 Command)\n\n"
+      }, {
+        "text": "```bash\n# Install the generator\nnpm install -g yo generator-code\n\n# Create the project\nyo code"
+      }, {
+        "text": "\n# ? What type of extension? New Extension (TypeScript)\n# ? What\u0027s the name of your extension? Forge"
+      }, {
+        "text": " CI\n```\n\nGo! 🔥"
+      }, {
+        "text": "",
+        "thoughtSignature": "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"
+      }]
+    }],
+    "pendingInputs": [{
+      "text": "",
+      "role": "user"
+    }]
+  }
+}
