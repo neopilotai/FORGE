@@ -26,6 +26,8 @@
         "node_modules",
         ".vscode-test",
         "coverage-ai",
-        "pr-insight"
+        "pr-insight",
+        "eslint.config.mts",
+        "tests/**/*"
     ]
 }
