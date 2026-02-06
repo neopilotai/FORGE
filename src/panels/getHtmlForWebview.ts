@@ -1,8 +1,14 @@
 import * as vscode from 'vscode';
 
 export function getHtmlForWebview(webview: vscode.Webview, data: any): string {
-    const style = `
-        <style>
+    const html = `
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>FORGE - Live Analysis</title>
+            <style>
             :root {
                 --accent: #ff4d4d;
                 --accent-soft: rgba(255, 77, 77, 0.1);
@@ -303,4 +309,6 @@ export function getHtmlForWebview(webview: vscode.Webview, data: any): string {
         </script>
     </body>
     </html>`;
+    
+    return html;
 }

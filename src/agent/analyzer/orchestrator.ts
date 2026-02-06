@@ -1,7 +1,7 @@
 // src/agent/analyzer/orchestrator.ts
 
 import { AIProvider, AIConfig, AnalysisResult, ForgeStreamChunk } from './ai';
-import { LogParser, LogAnalysis } from '../logs';
+import { LogParser } from '../../services/logParser';
 import { TestGenerator } from './testGenerator';
 
 export interface OrchestrationResult extends AnalysisResult {
