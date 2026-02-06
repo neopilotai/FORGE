@@ -1,0 +1,42 @@
+2026-02-06 00:57:06.468 [info] Extension host with pid 609 started
+2026-02-06 00:57:06.484 [info] Lock '/vercel/share/.local/share/code-server/User/workspaceStorage/eb4e58/vscode.lock': Lock acquired.
+2026-02-06 00:57:06.853 [info] ExtensionService#_doActivateExtension vscode.configuration-editing, startup: false, activationEvent: 'onLanguage:jsonc'
+2026-02-06 00:57:06.854 [info] ExtensionService#_doActivateExtension vscode.json-language-features, startup: false, activationEvent: 'onLanguage:jsonc'
+2026-02-06 00:57:06.854 [info] ExtensionService#_doActivateExtension vscode.typescript-language-features, startup: false, activationEvent: 'onLanguage:jsonc'
+2026-02-06 00:57:06.854 [info] ExtensionService#_doActivateExtension vscode.emmet, startup: false, activationEvent: 'onLanguage'
+2026-02-06 00:57:06.854 [info] ExtensionService#_doActivateExtension Vue.volar, startup: false, activationEvent: 'onLanguage'
+2026-02-06 00:57:07.855 [info] ExtensionService#_doActivateExtension vercel.v0-bridge, startup: true, activationEvent: '*'
+2026-02-06 00:57:07.866 [error] Activating extension vercel.v0-bridge failed due to an error:
+2026-02-06 00:57:07.866 [error] Error: Cannot find module './api-server'
+Require stack:
+- /vercel/share/.local/share/code-server/extensions/vercel.v0-bridge-1.0.0/extension.js
+- /usr/local/lib/code-server-0.0.37/lib/vscode/out/vs/workbench/api/node/extensionHostProcess.js
+	at Function.<anonymous> (node:internal/modules/cjs/loader:1383:15)
+	at t._resolveFilename (file:///usr/local/lib/code-server-0.0.37/lib/vscode/out/vs/workbench/api/node/extensionHostProcess.js:223:22998)
+	at defaultResolveImpl (node:internal/modules/cjs/loader:1025:19)
+	at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1030:22)
+	at Function.<anonymous> (node:internal/modules/cjs/loader:1192:37)
+	at e._load (file:///usr/local/lib/code-server-0.0.37/lib/vscode/out/vs/workbench/api/node/extensionHostProcess.js:405:6054)
+	at t._load (file:///usr/local/lib/code-server-0.0.37/lib/vscode/out/vs/workbench/api/node/extensionHostProcess.js:223:22716)
+	at r._load (file:///usr/local/lib/code-server-0.0.37/lib/vscode/out/vs/workbench/api/node/extensionHostProcess.js:215:24188)
+	at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+	at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+	at Module.require (node:internal/modules/cjs/loader:1463:12)
+	at require (node:internal/modules/helpers:147:16)
+	at Object.<anonymous> (/vercel/share/.local/share/code-server/extensions/vercel.v0-bridge-1.0.0/extension.js:41:22)
+	at Module._compile (node:internal/modules/cjs/loader:1706:14)
+	at Object..js (node:internal/modules/cjs/loader:1839:10)
+	at Module.load (node:internal/modules/cjs/loader:1441:32)
+	at Function.<anonymous> (node:internal/modules/cjs/loader:1263:12)
+	at e._load (file:///usr/local/lib/code-server-0.0.37/lib/vscode/out/vs/workbench/api/node/extensionHostProcess.js:405:6054)
+	at t._load (file:///usr/local/lib/code-server-0.0.37/lib/vscode/out/vs/workbench/api/node/extensionHostProcess.js:223:22716)
+	at r._load (file:///usr/local/lib/code-server-0.0.37/lib/vscode/out/vs/workbench/api/node/extensionHostProcess.js:215:24188)
+	at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+	at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+	at Module.require (node:internal/modules/cjs/loader:1463:12)
+	at require (node:internal/modules/helpers:147:16)
+	at IK.Cb (file:///usr/local/lib/code-server-0.0.37/lib/vscode/out/vs/workbench/api/node/extensionHostProcess.js:254:1816)
+2026-02-06 00:57:07.866 [info] ExtensionService#_doActivateExtension vscode.npm, startup: true, activationEvent: 'workspaceContains:package.json'
+2026-02-06 00:57:09.065 [info] Eager extensions activated
+2026-02-06 00:57:09.065 [info] ExtensionService#_doActivateExtension bradlc.vscode-tailwindcss, startup: false, activationEvent: 'onStartupFinished'
+2026-02-06 00:57:15.565 [info] ExtensionService#_doActivateExtension vscode.extension-editing, startup: false, activationEvent: 'onLanguage:json'

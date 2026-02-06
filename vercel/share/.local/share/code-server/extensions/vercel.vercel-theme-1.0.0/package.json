@@ -1,0 +1,22 @@
+{
+  "name": "vercel-theme",
+  "displayName": "Vercel Theme",
+  "description": "Dark theme for Vercel code editor",
+  "version": "1.0.0",
+  "publisher": "vercel",
+  "engines": {
+    "vscode": "^1.60.0"
+  },
+  "categories": [
+    "Themes"
+  ],
+  "contributes": {
+    "themes": [
+      {
+        "label": "Vercel Theme",
+        "uiTheme": "vs-dark",
+        "path": "./themes/vercel-color-theme.json"
+      }
+    ]
+  }
+}

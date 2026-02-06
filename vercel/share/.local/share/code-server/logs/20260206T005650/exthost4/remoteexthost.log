@@ -1,0 +1,56 @@
+2026-02-06 02:00:52.241 [info] Extension host with pid 40904 started
+2026-02-06 02:00:52.241 [error] Error: EEXIST: file already exists, open '/vercel/share/.local/share/code-server/User/workspaceStorage/eb4e58/vscode.lock'
+2026-02-06 02:00:52.242 [info] Lock '/vercel/share/.local/share/code-server/User/workspaceStorage/eb4e58/vscode.lock': Could not acquire lock, checking if the file is stale.
+2026-02-06 02:00:52.242 [info] Lock '/vercel/share/.local/share/code-server/User/workspaceStorage/eb4e58/vscode.lock': The lock does not look stale, elapsed: 8 ms, giving up.
+2026-02-06 02:00:52.242 [error] Error: EEXIST: file already exists, open '/vercel/share/.local/share/code-server/User/workspaceStorage/eb4e58-1/vscode.lock'
+2026-02-06 02:00:52.243 [info] Lock '/vercel/share/.local/share/code-server/User/workspaceStorage/eb4e58-1/vscode.lock': Could not acquire lock, checking if the file is stale.
+2026-02-06 02:00:52.243 [info] Lock '/vercel/share/.local/share/code-server/User/workspaceStorage/eb4e58-1/vscode.lock': The lock does not look stale, elapsed: 904 ms, giving up.
+2026-02-06 02:00:52.243 [error] Error: EEXIST: file already exists, open '/vercel/share/.local/share/code-server/User/workspaceStorage/eb4e58-2/vscode.lock'
+2026-02-06 02:00:52.249 [info] Lock '/vercel/share/.local/share/code-server/User/workspaceStorage/eb4e58-2/vscode.lock': Could not acquire lock, checking if the file is stale.
+2026-02-06 02:00:52.250 [info] Lock '/vercel/share/.local/share/code-server/User/workspaceStorage/eb4e58-2/vscode.lock': The lock does not look stale, elapsed: 122 ms, giving up.
+2026-02-06 02:00:52.252 [info] Lock '/vercel/share/.local/share/code-server/User/workspaceStorage/eb4e58-3/vscode.lock': Lock acquired.
+2026-02-06 02:00:54.991 [info] ExtensionService#_doActivateExtension vercel.v0-bridge, startup: true, activationEvent: '*'
+2026-02-06 02:00:55.002 [error] Activating extension vercel.v0-bridge failed due to an error:
+2026-02-06 02:00:55.002 [error] Error: Cannot find module './api-server'
+Require stack:
+- /vercel/share/.local/share/code-server/extensions/vercel.v0-bridge-1.0.0/extension.js
+- /usr/local/lib/code-server-0.0.37/lib/vscode/out/vs/workbench/api/node/extensionHostProcess.js
+	at Function.<anonymous> (node:internal/modules/cjs/loader:1383:15)
+	at t._resolveFilename (file:///usr/local/lib/code-server-0.0.37/lib/vscode/out/vs/workbench/api/node/extensionHostProcess.js:223:22998)
+	at defaultResolveImpl (node:internal/modules/cjs/loader:1025:19)
+	at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1030:22)
+	at Function.<anonymous> (node:internal/modules/cjs/loader:1192:37)
+	at e._load (file:///usr/local/lib/code-server-0.0.37/lib/vscode/out/vs/workbench/api/node/extensionHostProcess.js:405:6054)
+	at t._load (file:///usr/local/lib/code-server-0.0.37/lib/vscode/out/vs/workbench/api/node/extensionHostProcess.js:223:22716)
+	at r._load (file:///usr/local/lib/code-server-0.0.37/lib/vscode/out/vs/workbench/api/node/extensionHostProcess.js:215:24188)
+	at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+	at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+	at Module.require (node:internal/modules/cjs/loader:1463:12)
+	at require (node:internal/modules/helpers:147:16)
+	at Object.<anonymous> (/vercel/share/.local/share/code-server/extensions/vercel.v0-bridge-1.0.0/extension.js:41:22)
+	at Module._compile (node:internal/modules/cjs/loader:1706:14)
+	at Object..js (node:internal/modules/cjs/loader:1839:10)
+	at Module.load (node:internal/modules/cjs/loader:1441:32)
+	at Function.<anonymous> (node:internal/modules/cjs/loader:1263:12)
+	at e._load (file:///usr/local/lib/code-server-0.0.37/lib/vscode/out/vs/workbench/api/node/extensionHostProcess.js:405:6054)
+	at t._load (file:///usr/local/lib/code-server-0.0.37/lib/vscode/out/vs/workbench/api/node/extensionHostProcess.js:223:22716)
+	at r._load (file:///usr/local/lib/code-server-0.0.37/lib/vscode/out/vs/workbench/api/node/extensionHostProcess.js:215:24188)
+	at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+	at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+	at Module.require (node:internal/modules/cjs/loader:1463:12)
+	at require (node:internal/modules/helpers:147:16)
+	at IK.Cb (file:///usr/local/lib/code-server-0.0.37/lib/vscode/out/vs/workbench/api/node/extensionHostProcess.js:254:1816)
+	at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+2026-02-06 02:00:55.003 [info] ExtensionService#_doActivateExtension vscode.npm, startup: true, activationEvent: 'workspaceContains:package.json'
+2026-02-06 02:00:57.282 [info] Eager extensions activated
+2026-02-06 02:00:57.283 [info] ExtensionService#_doActivateExtension bradlc.vscode-tailwindcss, startup: false, activationEvent: 'onStartupFinished'
+2026-02-06 02:01:04.530 [info] ExtensionService#_doActivateExtension vscode.configuration-editing, startup: false, activationEvent: 'onLanguage:json'
+2026-02-06 02:01:04.530 [info] ExtensionService#_doActivateExtension vscode.extension-editing, startup: false, activationEvent: 'onLanguage:json'
+2026-02-06 02:01:04.530 [info] ExtensionService#_doActivateExtension vscode.json-language-features, startup: false, activationEvent: 'onLanguage:json'
+2026-02-06 02:01:04.530 [info] ExtensionService#_doActivateExtension vscode.emmet, startup: false, activationEvent: 'onLanguage'
+2026-02-06 02:01:04.530 [info] ExtensionService#_doActivateExtension Vue.volar, startup: false, activationEvent: 'onLanguage'
+2026-02-06 02:01:13.342 [info] ExtensionService#_doActivateExtension vscode.markdown-language-features, startup: false, activationEvent: 'onLanguage:markdown'
+2026-02-06 02:01:17.632 [info] ExtensionService#_doActivateExtension vscode.markdown-math, startup: false, activationEvent: 'api', root cause: vscode.markdown-language-features
+2026-02-06 02:01:17.884 [info] ExtensionService#_doActivateExtension vscode.terminal-suggest, startup: false, activationEvent: 'onTerminalShellIntegration:*'
+2026-02-06 02:05:45.414 [info] ExtensionService#_doActivateExtension vscode.typescript-language-features, startup: false, activationEvent: 'onLanguage:typescript'
+2026-02-06 02:05:45.415 [info] ExtensionService#_doActivateExtension svelte.svelte-vscode, startup: false, activationEvent: 'onLanguage:typescript'

@@ -1,0 +1,61 @@
+{
+	"name": "v0-bridge",
+	"displayName": "v0 Bridge",
+	"description": "Bridges code-server with v0 parent frame for file sync and readonly mode",
+	"version": "1.0.0",
+	"publisher": "vercel",
+	"license": "MIT",
+	"engines": {
+		"vscode": "^1.85.0"
+	},
+	"categories": [
+		"Other"
+	],
+	"activationEvents": [
+		"*"
+	],
+	"main": "./extension.js",
+	"contributes": {
+		"commands": [
+			{
+				"command": "v0Bridge.getStatus",
+				"title": "v0: Show Editor Status",
+				"category": "v0"
+			},
+			{
+				"command": "v0Bridge.lockEditor",
+				"title": "v0: Lock Editor",
+				"category": "v0"
+			},
+			{
+				"command": "v0Bridge.unlockEditor",
+				"title": "v0: Unlock Editor",
+				"category": "v0"
+			},
+			{
+				"command": "v0Bridge.saveAllAndSync",
+				"title": "v0: Save All and Sync to Preview",
+				"category": "v0"
+			},
+			{
+				"command": "v0Bridge.revertAll",
+				"title": "v0: Revert All Changes",
+				"category": "v0"
+			}
+		]
+	},
+	"capabilities": {
+		"virtualWorkspaces": true,
+		"untrustedWorkspaces": {
+			"supported": true
+		}
+	},
+	"devDependencies": {
+		"@types/vscode": "^1.85.0",
+		"typescript": "^5.6.2"
+	},
+	"scripts": {
+		"build": "tsc",
+		"watch": "tsc -w"
+	}
+}
