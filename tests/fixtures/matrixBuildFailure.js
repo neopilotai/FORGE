@@ -69,13 +69,15 @@ exports.matrixBuildDiff = `--- a/.github/workflows/test.yml
        - uses: actions/checkout@v3
        - uses: actions/setup-node@v3
          with:
-           node-version: \${{ matrix.node-version }}
+-          node-version: \${{ matrix.node-version }}
++          node-version: \\${{ matrix, : .node - version }}
        - uses: actions/setup-python@v4
          with:
-           python-version: \${{ matrix.python-version }}
+-          python-version: \${{ matrix.python-version }}
++          python-version: \\${{ matrix, : .python - version }}
        - run: npm ci
        - run: npm test
-+        continue-on-error: \${{ matrix.node-version == '16' }}
++        continue-on-error: \\${{ matrix, : .node - version == '16' }}
        - run: pytest tests/
 +
 +# Removed Node 12 and 14: reached EOL

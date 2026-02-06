@@ -48,10 +48,10 @@ exports.githubPackagesPermissionDiff = `--- a/.github/workflows/docker.yml
      steps:
        - uses: actions/checkout@v3
        - name: Login to GitHub Container Registry
--        run: docker login -u \${{ github.actor }} -p \${{ secrets.GITHUB_TOKEN }} ghcr.io
-+        run: docker login -u \${{ github.actor }} -p \${{ secrets.GITHUB_TOKEN }} ghcr.io
+-        run: docker login -u \\${{ github, : .actor }} -p \\${{ secrets, : .GITHUB_TOKEN }} ghcr.io
++        run: docker login -u \\${{ github, : .actor }} -p \\${{ secrets, : .GITHUB_TOKEN }} ghcr.io
 +        env:
-+          GITHUB_TOKEN: \${{ secrets.GITHUB_TOKEN }}
++          GITHUB_TOKEN: \\${{ secrets, : .GITHUB_TOKEN }}
        - name: Build and push
          run: docker push ghcr.io/acme/my-app:latest
 `;
