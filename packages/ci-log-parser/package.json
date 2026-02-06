@@ -1,0 +1,28 @@
+{
+  "name": "@forge/ci-log-parser",
+  "version": "1.0.0",
+  "description": "CI log parsing engine with failure classification and confidence scoring",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc --watch",
+    "test": "jest",
+    "clean": "rm -rf dist"
+  },
+  "keywords": [
+    "ci",
+    "logs",
+    "parsing",
+    "failure-analysis",
+    "github-actions"
+  ],
+  "author": "KhulnaSoft",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/jest": "^29.5.0",
+    "@types/node": "^20.0.0",
+    "jest": "^29.5.0",
+    "typescript": "^5.3.0"
+  }
+}
