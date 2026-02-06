@@ -47,7 +47,7 @@ jobs:
       - run: npm test
       - run: pytest tests/`;
 
-export const matrixBuildDiff = \`--- a/.github/workflows/test.yml
+export const matrixBuildDiff = `--- a/.github/workflows/test.yml
 +++ b/.github/workflows/test.yml
 @@ -1,19 +1,28 @@
  name: Test Matrix
@@ -80,7 +80,6 @@ export const matrixBuildDiff = \`--- a/.github/workflows/test.yml
 +# Removed Node 12 and 14: reached EOL
 +# Removed Python 3.8: missing async features needed for tests
 +# Added Node 20: latest LTS version
-\`;
-
-export const matrixBuildExpectedFix = \`The build matrix includes unsupported Node.js and Python versions that have reached end-of-life. Update to currently supported versions.\`;
 `;
+
+export const matrixBuildExpectedFix = `The build matrix includes unsupported Node.js and Python versions that have reached end-of-life. Update to currently supported versions.`;

@@ -30,7 +30,7 @@ jobs:
       - name: Build and push
         run: docker push ghcr.io/acme/my-app:latest`;
 
-export const githubPackagesPermissionDiff = \`--- a/.github/workflows/docker.yml
+export const githubPackagesPermissionDiff = `--- a/.github/workflows/docker.yml
 +++ b/.github/workflows/docker.yml
 @@ -1,15 +1,19 @@
  name: Publish Docker Image
@@ -53,7 +53,6 @@ export const githubPackagesPermissionDiff = \`--- a/.github/workflows/docker.yml
 +          GITHUB_TOKEN: \${{ secrets.GITHUB_TOKEN }}
        - name: Build and push
          run: docker push ghcr.io/acme/my-app:latest
-\`;
-
-export const githubPackagesExpectedFix = \`The workflow lacks the 'packages: write' permission in the permissions block, preventing Docker image pushes to GitHub Container Registry.\`;
 `;
+
+export const githubPackagesExpectedFix = `The workflow lacks the 'packages: write' permission in the permissions block, preventing Docker image pushes to GitHub Container Registry.`;

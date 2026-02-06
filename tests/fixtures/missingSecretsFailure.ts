@@ -34,7 +34,7 @@ jobs:
       - name: Deploy
         run: npx serverless deploy --stage prod`;
 
-export const missingSecretsDiff = \`--- a/.github/workflows/deploy.yml
+export const missingSecretsDiff = `--- a/.github/workflows/deploy.yml
 +++ b/.github/workflows/deploy.yml
 @@ -1,14 +1,25 @@
  name: Deploy Serverless
@@ -62,7 +62,6 @@ export const missingSecretsDiff = \`--- a/.github/workflows/deploy.yml
 +#    - STRIPE_SECRET_KEY
 +#    - DATABASE_URL
 +#    - API_KEY
-\`;
-
-export const missingSecretsExpectedFix = \`The workflow is missing environment variable mappings for required secrets. Add them to the Deploy step and configure them in repository settings.\`;
 `;
+
+export const missingSecretsExpectedFix = `The workflow is missing environment variable mappings for required secrets. Add them to the Deploy step and configure them in repository settings.`;

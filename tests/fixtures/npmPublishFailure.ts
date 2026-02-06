@@ -28,7 +28,7 @@ npm ERR! npm ERR! 403 Forbidden - PUT https://registry.npmjs.org/my-lib - [no-au
 npm info ok
 `;
 
-export const npmPublishPRDiff = \`--- a/.github/workflows/publish.yml
+export const npmPublishPRDiff = `--- a/.github/workflows/publish.yml
 +++ b/.github/workflows/publish.yml
 @@ -1,15 +1,20 @@
  name: Publish
@@ -51,7 +51,6 @@ export const npmPublishPRDiff = \`--- a/.github/workflows/publish.yml
          run: npm publish
 +        env:
 +          NODE_AUTH_TOKEN: \${{ secrets.NPM_TOKEN }}
-\`;
-
-export const npmPublishExpectedFix = \`registry-url and NODE_AUTH_TOKEN environment variable are required for npm authentication. The workflow is missing proper authentication setup.\`;
 `;
+
+export const npmPublishExpectedFix = `registry-url and NODE_AUTH_TOKEN environment variable are required for npm authentication. The workflow is missing proper authentication setup.`;
