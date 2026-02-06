@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.npmPublishPRDiff = exports.npmPublishFailureLog = void 0;
+exports.npmPublishExpectedFix = exports.npmPublishPRDiff = exports.npmPublishFailureLog = void 0;
 exports.npmPublishFailureLog = `
 npm notice 
 npm notice New major version of npm available! 8.1.0 -> 9.6.7
@@ -30,8 +30,7 @@ npm ERR! npm ERR! code E403
 npm ERR! npm ERR! 403 Forbidden - PUT https://registry.npmjs.org/my-lib - [no-auth] Unauthorized
 npm info ok
 `;
-exports.npmPublishPRDiff = ;
-`--- a/.github/workflows/publish.yml
+exports.npmPublishPRDiff = `--- a/.github/workflows/publish.yml
 +++ b/.github/workflows/publish.yml
 @@ -1,15 +1,20 @@
  name: Publish
@@ -54,8 +53,6 @@ exports.npmPublishPRDiff = ;
          run: npm publish
 +        env:
 +          NODE_AUTH_TOKEN: \${{ secrets.NPM_TOKEN }}
-\`;
-
-export const npmPublishExpectedFix = \`registry-url and NODE_AUTH_TOKEN environment variable are required for npm authentication. The workflow is missing proper authentication setup.\`;
 `;
+exports.npmPublishExpectedFix = `registry-url and NODE_AUTH_TOKEN environment variable are required for npm authentication. The workflow is missing proper authentication setup.`;
 //# sourceMappingURL=npmPublishFailure.js.map

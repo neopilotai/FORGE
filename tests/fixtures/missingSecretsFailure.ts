@@ -52,9 +52,9 @@ export const missingSecretsDiff = `--- a/.github/workflows/deploy.yml
        - name: Deploy
          run: npx serverless deploy --stage prod
 +        env:
-+          STRIPE_SECRET_KEY: \${{ secrets.STRIPE_SECRET_KEY }}
-+          DATABASE_URL: \${{ secrets.DATABASE_URL }}
-+          API_KEY: \${{ secrets.API_KEY }}
++          STRIPE_SECRET_KEY: \\${{ secrets.STRIPE_SECRET_KEY }}
++          DATABASE_URL: \\${{ secrets.DATABASE_URL }}
++          API_KEY: \\${{ secrets.API_KEY }}
 +
 +# Note: Add the following secrets to your repository:
 +# 1. Go to Settings > Secrets and variables > Actions

@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.githubPackagesPermissionDiff = exports.githubPackagesPermissionYAML = exports.githubPackagesPermissionLog = void 0;
+exports.githubPackagesExpectedFix = exports.githubPackagesPermissionDiff = exports.githubPackagesPermissionYAML = exports.githubPackagesPermissionLog = void 0;
 exports.githubPackagesPermissionLog = `
 Run docker login -u $GITHUB_ACTOR -p $GITHUB_TOKEN ghcr.io
 WARNING! Using --password via the CLI is insecure. Use --password-stdin.
@@ -31,8 +31,7 @@ jobs:
         run: docker login -u ${{ github, : .actor }} -p ${{ secrets, : .GITHUB_TOKEN }} ghcr.io
       - name: Build and push
         run: docker push ghcr.io/acme/my-app:latest`;
-exports.githubPackagesPermissionDiff = ;
-`--- a/.github/workflows/docker.yml
+exports.githubPackagesPermissionDiff = `--- a/.github/workflows/docker.yml
 +++ b/.github/workflows/docker.yml
 @@ -1,15 +1,19 @@
  name: Publish Docker Image
@@ -55,8 +54,6 @@ exports.githubPackagesPermissionDiff = ;
 +          GITHUB_TOKEN: \${{ secrets.GITHUB_TOKEN }}
        - name: Build and push
          run: docker push ghcr.io/acme/my-app:latest
-\`;
-
-export const githubPackagesExpectedFix = \`The workflow lacks the 'packages: write' permission in the permissions block, preventing Docker image pushes to GitHub Container Registry.\`;
 `;
+exports.githubPackagesExpectedFix = `The workflow lacks the 'packages: write' permission in the permissions block, preventing Docker image pushes to GitHub Container Registry.`;
 //# sourceMappingURL=githubPackagesFailure.js.map

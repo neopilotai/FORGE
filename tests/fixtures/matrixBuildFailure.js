@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.matrixBuildDiff = exports.matrixBuildYAML = exports.matrixBuildFailureLog = void 0;
+exports.matrixBuildExpectedFix = exports.matrixBuildDiff = exports.matrixBuildYAML = exports.matrixBuildFailureLog = void 0;
 exports.matrixBuildFailureLog = `
 Run npm test -- --reporter=json > test-results.json
 PASS  src/utils.test.ts
@@ -48,8 +48,7 @@ jobs:
       - run: npm ci
       - run: npm test
       - run: pytest tests/`;
-exports.matrixBuildDiff = ;
-`--- a/.github/workflows/test.yml
+exports.matrixBuildDiff = `--- a/.github/workflows/test.yml
 +++ b/.github/workflows/test.yml
 @@ -1,19 +1,28 @@
  name: Test Matrix
@@ -82,8 +81,6 @@ exports.matrixBuildDiff = ;
 +# Removed Node 12 and 14: reached EOL
 +# Removed Python 3.8: missing async features needed for tests
 +# Added Node 20: latest LTS version
-\`;
-
-export const matrixBuildExpectedFix = \`The build matrix includes unsupported Node.js and Python versions that have reached end-of-life. Update to currently supported versions.\`;
 `;
+exports.matrixBuildExpectedFix = `The build matrix includes unsupported Node.js and Python versions that have reached end-of-life. Update to currently supported versions.`;
 //# sourceMappingURL=matrixBuildFailure.js.map

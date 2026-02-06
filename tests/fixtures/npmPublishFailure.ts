@@ -50,7 +50,7 @@ export const npmPublishPRDiff = `--- a/.github/workflows/publish.yml
        - name: Publish to npm
          run: npm publish
 +        env:
-+          NODE_AUTH_TOKEN: \${{ secrets.NPM_TOKEN }}
++          NODE_AUTH_TOKEN: \\${{ secrets.NPM_TOKEN }}
 `;
 
 export const npmPublishExpectedFix = `registry-url and NODE_AUTH_TOKEN environment variable are required for npm authentication. The workflow is missing proper authentication setup.`;
